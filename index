@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#8bd400" />
+  <meta name="description" content="Virtual Validation System — secure, streamlined skill validation and assessment." />
+  <title>Virtual Validation System | CR3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --lime: #91d500;
+      --lime-bright: #a8f000;
+      --ink: #10150b;
+      --muted: #a7b09d;
+      --glass: rgba(255,255,255,.075);
+      --line: rgba(255,255,255,.13);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; min-height: 100vh; overflow-x: hidden; color: #f7faef;
+      font-family: 'DM Sans', sans-serif;
+      background: radial-gradient(ellipse at 78% 18%, rgba(145,213,0,.16), transparent 32%),
+                  radial-gradient(ellipse at 12% 82%, rgba(94,142,0,.16), transparent 34%),
+                  linear-gradient(135deg, #090d08 0%, #11190b 48%, #080c07 100%);
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; opacity: .16; z-index: -1;
+      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 54px 54px; mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+    .ambient { position: fixed; width: 380px; height: 380px; border-radius: 50%; filter: blur(95px); opacity: .18; pointer-events: none; z-index: -1; animation: drift 13s ease-in-out infinite alternate; }
+    .ambient.one { background: #8ed000; top: -170px; right: -100px; }
+    .ambient.two { background: #477d00; bottom: -210px; left: -100px; animation-delay: -5s; }
+    @keyframes drift { from { transform: translate3d(0,0,0) scale(1); } to { transform: translate3d(-45px,55px,0) scale(1.18); } }
+    .shell { width: min(1160px, calc(100% - 48px)); margin: auto; }
+    header { height: 92px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .brand { display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; }
+    .brand img { width: 55px; height: 55px; object-fit: contain; border-radius: 5px; box-shadow: 0 0 25px rgba(145,213,0,.12); }
+    .brand-name { font: 700 16px 'Space Grotesk', sans-serif; letter-spacing: .04em; }
+    .brand-name span { display: block; margin-top: 3px; color: #9cab8d; font: 600 10px 'DM Sans', sans-serif; letter-spacing: .22em; text-transform: uppercase; }
+    .status { display: inline-flex; align-items: center; gap: 9px; padding: 9px 14px; border: 1px solid rgba(145,213,0,.23); border-radius: 99px; background: rgba(145,213,0,.07); color: #d6f5a0; font-size: 11px; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }
+    .status i { width: 7px; height: 7px; border-radius: 50%; background: var(--lime-bright); box-shadow: 0 0 12px var(--lime); animation: pulse 1.8s infinite; }
+    @keyframes pulse { 50% { opacity: .35; box-shadow: 0 0 3px var(--lime); } }
+    main { min-height: calc(100vh - 160px); display: grid; place-items: center; padding: 65px 0 78px; }
+    .hero { width: 100%; display: grid; grid-template-columns: 1.08fr .92fr; align-items: center; gap: 58px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: #b7e76b; font-size: 11px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
+    .eyebrow::before { content: ''; width: 27px; height: 1px; background: var(--lime); box-shadow: 0 0 10px var(--lime); }
+    h1 { margin: 22px 0 18px; max-width: 670px; font: 700 clamp(43px, 6vw, 76px)/1.02 'Space Grotesk', sans-serif; letter-spacing: -.055em; }
+    h1 .accent { color: var(--lime); text-shadow: 0 0 34px rgba(145,213,0,.19); }
+    .intro { max-width: 535px; color: #b5bcae; font-size: 16px; line-height: 1.85; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-top: 35px; }
+    .login-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 13px; min-height: 58px; padding: 0 25px; overflow: hidden; border: 1px solid rgba(211,255,130,.8); border-radius: 13px; color: #111807; background: linear-gradient(110deg, #a9ed20, #83c600); box-shadow: 0 10px 35px rgba(131,198,0,.2), inset 0 1px rgba(255,255,255,.55); text-decoration: none; font-size: 12px; font-weight: 900; letter-spacing: .12em; transition: transform .25s, box-shadow .25s, filter .25s; }
+    .login-btn::before { content: ''; position: absolute; top: -80%; left: -45%; width: 35%; height: 260%; transform: rotate(25deg); background: rgba(255,255,255,.4); transition: left .6s; }
+    .login-btn:hover { transform: translateY(-4px); filter: brightness(1.08); box-shadow: 0 17px 42px rgba(145,213,0,.32), 0 0 0 5px rgba(145,213,0,.08); }
+    .login-btn:hover::before { left: 125%; }
+    .login-btn:active { transform: translateY(-1px) scale(.99); }
+    .login-btn svg { width: 17px; height: 17px; transition: transform .25s; }
+    .login-btn:hover svg { transform: translateX(4px); }
+    .secure-note { color: #8f9a83; font-size: 12px; }
+    .secure-note strong { color: #d3e7b4; font-weight: 600; }
+    .visual { position: relative; min-height: 420px; display: grid; place-items: center; }
+    .orbit { position: absolute; width: min(390px, 90vw); aspect-ratio: 1; border: 1px solid rgba(173,226,83,.17); border-radius: 50%; animation: rotate 28s linear infinite; }
+    .orbit::before, .orbit::after { content: ''; position: absolute; border: 1px solid rgba(173,226,83,.11); border-radius: 50%; inset: 27px; }
+    .orbit::after { inset: 57px; border-style: dashed; opacity: .55; }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    .orbit-dot { position: absolute; top: 13%; left: 19%; width: 10px; height: 10px; border-radius: 50%; background: var(--lime-bright); box-shadow: 0 0 20px 5px rgba(168,240,0,.4); }
+    .glass-card { position: relative; width: min(330px, 82vw); padding: 34px 30px 30px; border: 1px solid rgba(255,255,255,.19); border-radius: 25px; background: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.035)); box-shadow: 0 25px 80px rgba(0,0,0,.35), inset 0 1px rgba(255,255,255,.16); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); transform: rotate(-3deg); transition: transform .45s ease, border-color .45s, box-shadow .45s; }
+    .glass-card:hover { transform: rotate(0deg) translateY(-8px); border-color: rgba(173,226,83,.42); box-shadow: 0 35px 90px rgba(0,0,0,.42), 0 0 45px rgba(145,213,0,.08); }
+    .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 29px; }
+    .card-mark { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: rgba(145,213,0,.14); border: 1px solid rgba(145,213,0,.25); color: var(--lime-bright); }
+    .card-mark svg { width: 21px; }
+    .card-label { color: #9ca990; font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    .card-title { margin: 0; font: 600 25px 'Space Grotesk', sans-serif; letter-spacing: -.04em; }
+    .card-desc { margin: 9px 0 27px; color: #aab5a0; font-size: 12px; line-height: 1.7; }
+    .progress-label { display: flex; justify-content: space-between; margin-bottom: 9px; color: #c4ceb8; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .progress { height: 5px; overflow: hidden; border-radius: 10px; background: rgba(255,255,255,.1); }
+    .progress span { display: block; width: 78%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #6da600, #b4f52a); box-shadow: 0 0 13px rgba(145,213,0,.5); animation: load 2s ease-out both; }
+    @keyframes load { from { width: 0; } to { width: 78%; } }
+    .mini-chip { position: absolute; display: flex; align-items: center; gap: 9px; padding: 12px 15px; border: 1px solid rgba(255,255,255,.15); border-radius: 13px; background: rgba(20,29,14,.72); box-shadow: 0 15px 35px rgba(0,0,0,.25); backdrop-filter: blur(14px); color: #dce8ce; font-size: 11px; font-weight: 700; animation: float 5s ease-in-out infinite; }
+    .mini-chip svg { width: 16px; height: 16px; color: var(--lime); }
+    .chip-one { top: 52px; right: -2px; }
+    .chip-two { bottom: 54px; left: -3px; animation-delay: -2.4s; }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 65px; }
+    .feature { padding: 19px 20px; border: 1px solid rgba(255,255,255,.09); border-radius: 15px; background: rgba(255,255,255,.035); transition: background .25s, transform .25s, border-color .25s; }
+    .feature:hover { transform: translateY(-5px); background: rgba(145,213,0,.07); border-color: rgba(145,213,0,.25); }
+    .feature strong { display: block; margin-bottom: 6px; color: #eaf4df; font: 600 13px 'Space Grotesk', sans-serif; }
+    .feature span { color: #929e86; font-size: 11px; line-height: 1.6; }
+    footer { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 15px; border-top: 1px solid rgba(255,255,255,.08); color: #77836d; font-size: 11px; }
+    footer b { color: #a7c77c; font-weight: 700; letter-spacing: .08em; }
+    .footer-right { display: flex; align-items: center; gap: 8px; }
+    .footer-right span { width: 5px; height: 5px; border-radius: 50%; background: var(--lime); }
+    @media (max-width: 850px) { .hero { grid-template-columns: 1fr; gap: 25px; } .hero-copy { text-align: center; } .eyebrow { justify-content: center; } .intro { margin-inline: auto; } .actions { justify-content: center; } .visual { min-height: 390px; } .features { margin-top: 25px; } }
+    @media (max-width: 560px) { .shell { width: min(100% - 32px, 500px); } header { height: 78px; } .brand img { width: 45px; height: 45px; } .brand-name { font-size: 13px; } .status { padding: 8px 10px; font-size: 9px; } main { padding: 52px 0 55px; } h1 { font-size: clamp(42px, 12vw, 59px); } .intro { font-size: 14px; } .actions { flex-direction: column; gap: 13px; } .login-btn { width: 100%; max-width: 330px; } .visual { min-height: 355px; } .orbit { width: 310px; } .glass-card { width: 280px; padding: 27px 24px; } .chip-one { right: -5px; top: 35px; } .chip-two { left: -4px; bottom: 32px; } .features { grid-template-columns: 1fr; gap: 10px; } .feature { padding: 15px 17px; } footer { padding: 18px 0; flex-direction: column; justify-content: center; text-align: center; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="ambient one"></div><div class="ambient two"></div>
+  <div class="shell">
+    <header>
+      <a class="brand" href="#top" aria-label="CR3 Virtual Validation System home">
+        <img src="logo.png" alt="CR3 logo" />
+        <div class="brand-name">CR3 <span>Training &amp; Validation</span></div>
+      </a>
+      <div class="status"><i></i> System Portal</div>
+    </header>
+
+    <main id="top">
+      <div>
+        <section class="hero">
+          <div class="hero-copy">
+            <div class="eyebrow">CR3 · Digital Assessment Platform</div>
+            <h1>Virtual <span class="accent">Validation</span><br>System</h1>
+            <p class="intro">A smarter way to validate skills. Connect with your trainer, complete assessments and access your validation journey through one streamlined digital platform.</p>
+            <div class="actions">
+              <a class="login-btn" href="https://script.google.com/macros/s/AKfycbwy2Uj0Mgw88U8jgwEzr7oeTf0VXpRySBIzAL0MtsgLIEo3gvnfcYN6HicmPuXfV8B6/exec" aria-label="Open Virtual Validation System login">
+                LOGIN TO SYSTEM
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+              <div class="secure-note"><strong>Direct access</strong> · Secure portal entry</div>
+            </div>
+          </div>
+
+          <div class="visual" aria-label="Digital validation illustration">
+            <div class="orbit"><span class="orbit-dot"></span></div>
+            <div class="glass-card">
+              <div class="card-top">
+                <div class="card-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.5 3.2 7.8 7.5 9.5 4.3-1.7 7.5-5 7.5-9.5V6L12 3Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg></div>
+                <span class="card-label">CR3 Platform</span>
+              </div>
+              <h2 class="card-title">Skills. Verified.</h2>
+              <p class="card-desc">A connected experience for trainer-led skill validation and digital assessment.</p>
+              <div class="progress-label"><span>Validation experience</span><span>Ready</span></div>
+              <div class="progress"><span></span></div>
+            </div>
+            <div class="mini-chip chip-one"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="4"/></svg> Digital validation</div>
+            <div class="mini-chip chip-two"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.5 9.2 17 19 7"/></svg> Trainer-led assessment</div>
+          </div>
+        </section>
+
+        <section class="features" aria-label="Platform highlights">
+          <div class="feature"><strong>01 &nbsp; Skill Validation</strong><span>Structured digital validation of practical skills.</span></div>
+          <div class="feature"><strong>02 &nbsp; Trainer Connect</strong><span>A streamlined experience for trainer and worker.</span></div>
+          <div class="feature"><strong>03 &nbsp; Digital Assessment</strong><span>Access assessments through a single portal.</span></div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <div>© <span id="year"></span> <b>CR3</b> · Virtual Validation System</div>
+      <div class="footer-right"><span></span> Digital access portal</div>
+    </footer>
+  </div>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // Subtle pointer glow, disabled on touch devices.
+    if (window.matchMedia('(pointer:fine)').matches) {
+      document.addEventListener('pointermove', (event) => {
+        const x = (event.clientX / window.innerWidth) * 100;
+        const y = (event.clientY / window.innerHeight) * 100;
+        document.body.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(145,213,0,.075), transparent 28%), radial-gradient(ellipse at 78% 18%, rgba(145,213,0,.13), transparent 32%), linear-gradient(135deg, #090d08 0%, #11190b 48%, #080c07 100%)`;
+      }, { passive: true });
+    }
+  </script>
+</body>
+</html>
